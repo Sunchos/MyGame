@@ -14,6 +14,8 @@ class WordTask
 public:
 	//! Constructor.
 	WordTask();
+	//! Constructor.
+	WordTask(char*, char*, char);
 	//! Destructor.
 	~WordTask();
 

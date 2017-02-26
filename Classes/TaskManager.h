@@ -28,8 +28,6 @@ public:
 	WordTask getRandTask();
 	//! Init.
 	void init(const int = 3);
-	//! Set num tasks.
-	void setNumTasks(const int);
 
 	//
 	// Private methods.
@@ -41,6 +39,8 @@ private:
 	void LoadDefaultWords();
 	//! Load from file.
 	bool LoadFile(const std::string filePaht);
+	//! Set num tasks.
+	void SetNumTasks(const int);
 	//! Save.
 	//void Save();
 	
@@ -49,7 +49,7 @@ private:
 	//
 private:
 	//! List tasks.
-	WordTask* listOfTasks_;
+	std::vector<WordTask> listOfTasks_;
 	//! Number tasks.
 	int numTasks_;
 	//! Random num.

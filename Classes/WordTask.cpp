@@ -9,6 +9,11 @@ WordTask::WordTask() : answer_(nullptr), key_(' '), task_(nullptr)
 
 }
 
+WordTask::WordTask(char* t, char* ans, char key)
+{
+	this->init(t, ans, key);
+}
+
 WordTask::~WordTask()
 {
 

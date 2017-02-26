@@ -8,15 +8,15 @@
 
 TaskManager::TaskManager()
 {
-	listOfTasks_ = nullptr;
+	//listOfTasks_ = nullptr;
 	numTasks_ = 3;
 	random_ = 0;
 }
 
 TaskManager::~TaskManager()
 {
-	delete[] listOfTasks_;
-	listOfTasks_ = nullptr;
+	//delete[] listOfTasks_;
+	//listOfTasks_ = nullptr;
 }
 
 void TaskManager::FindData(const std::string& line, const size_t index)
@@ -49,7 +49,7 @@ void TaskManager::FindData(const std::string& line, const size_t index)
 	char *ansCh = new char[ans.length() + 1];
 	strcpy(ansCh, ans.c_str());
 
-	listOfTasks_[index].init(taskCh, ansCh, key[0u]);
+	listOfTasks_.push_back(WordTask(taskCh, ansCh, key[0u]));
 }
 
 int TaskManager::getNumTasks()
@@ -65,17 +65,15 @@ WordTask TaskManager::getRandTask()
 
 WordTask TaskManager::getTask(const int count)
 {
-	return listOfTasks_[count];
+	return listOfTasks_.at(count);
 }
 
 void TaskManager::init(const int numTask)
 {
-	setNumTasks(numTask);
-	listOfTasks_ = new WordTask[numTasks_];
-
 	if (!LoadFile("words.txt"))
 		LoadDefaultWords();
 
+	SetNumTasks(listOfTasks_.size());
 	srand(time(0));
 }
 
@@ -87,7 +85,7 @@ void TaskManager::LoadDefaultWords()
 
 	for (int i = 0; i != numTasks_; ++i)
 	{
-		listOfTasks_[i].init(tasks[i], ans[i], key[i]);
+		listOfTasks_.push_back(WordTask(tasks[i], ans[i], key[0u]));
 	}
 }
 
@@ -99,7 +97,7 @@ bool TaskManager::LoadFile(const std::string filePaht)
 	if (!ifile.is_open())
 		return false;
 
-	while (std::getline(ifile, line) || i != numTasks_)
+	while (std::getline(ifile, line))
 	{
 		FindData(line, i);
 		++i;
@@ -109,7 +107,7 @@ bool TaskManager::LoadFile(const std::string filePaht)
 	return true;
 }
 
-void TaskManager::setNumTasks(const int num)
+void TaskManager::SetNumTasks(const int num)
 {
 	numTasks_ = num;
 }
