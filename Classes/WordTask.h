@@ -15,7 +15,7 @@ public:
 	//! Constructor.
 	WordTask();
 	//! Constructor.
-	WordTask(char*, char*, char);
+	WordTask(char*, char*, char, int falAns = 0, int righAns = 0);
 	//! Destructor.
 	~WordTask();
 
@@ -24,13 +24,17 @@ public:
 	//
 public:
 	//! Init.
-	int init(char*, char*, char);
+	int init(char*, char*, char, int falAns = 0, int righAns = 0);
 	//! Check key.
 	bool isKeyCorrect(const EventKeyboard::KeyCode& keyCode);
 	//! Retrurns answer.
 	char* getAnswer() { return answer_; }
+	//! Returns count false answer.
+	int getFalseAns() const { return falseAns_; }
 	//! Returns key.
 	char getKey() { return key_; }
+	//! Returns count right answer.
+	int getRightAns() const { return rightAns_; }
 	//! Returns task.
 	char* getTask() { return task_; }
 	//! Set answer.
@@ -46,8 +50,12 @@ public:
 private:
 	//! Answer.
 	char *answer_;
+	//! Count false answer.
+	int falseAns_;
 	//! Key.
 	char key_;
+	//! Count right answer.
+	int rightAns_;
 	//! Task.
 	char *task_;
 };

@@ -4,14 +4,15 @@
 // Implementation of the WordTask class.
 //
 
-WordTask::WordTask() : answer_(nullptr), key_(' '), task_(nullptr)
+WordTask::WordTask() 
+	: answer_(nullptr), key_(' '), task_(nullptr) , falseAns_(0), rightAns_(0)
 {
 
 }
 
-WordTask::WordTask(char* t, char* ans, char key)
+WordTask::WordTask(char* t, char* ans, char key, int falAns, int righAns)
 {
-	this->init(t, ans, key);
+	this->init(t, ans, key, falAns, righAns);
 }
 
 WordTask::~WordTask()
@@ -19,7 +20,7 @@ WordTask::~WordTask()
 
 }
 
-int WordTask::init(char* t, char* ans, char key)
+int WordTask::init(char* t, char* ans, char key, int falAns, int righAns)
 {
 	this->key_ = key;
 	if (ans != nullptr && t != nullptr)

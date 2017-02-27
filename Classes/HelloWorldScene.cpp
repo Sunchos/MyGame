@@ -1,7 +1,11 @@
 #include "HelloWorldScene.h"
 #include "SimpleAudioEngine.h"
+#include <fstream>
+#include <string>
 
 USING_NS_CC;
+
+int HelloWorld::endLevelScore_ = 200;
 
 void HelloWorld::addScore(const int s)
 {
@@ -72,6 +76,29 @@ void HelloWorld::createEndScene()
 	auto menu = Menu::create(replayItem, NULL);
 	menu->setPosition(Vec2::ZERO);
 	endScene_->addChild(menu, 1);
+}
+
+void HelloWorld::createWonScene()
+{
+	wonScene_ = Scene::create();
+
+	Label* lbWon = Label::createWithTTF("You Won", LABEL_FONTNAME, 3 * LABEL_FONTSIZE);
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+	Vec2 pos = Vec2(origin.x + visibleSize.width / 2,
+		origin.y + visibleSize.height / 2 + 60);
+	lbWon->setPosition(pos);
+	wonScene_->addChild(lbWon);
+
+	auto replayItem = MenuItemImage::create("PlayButtonNormal.png",
+		"PlayButtonNormalPressed.png",
+		CC_CALLBACK_1(HelloWorld::menuReplayCallback, this));
+	replayItem->setPosition(Vec2(pos.x, pos.y - lbWon->getContentSize().height - 10));
+
+	auto menu = Menu::create(replayItem, NULL);
+	menu->setPosition(Vec2::ZERO);
+	wonScene_->addChild(menu, 1);
 }
 
 void HelloWorld::CreateLives()
@@ -218,8 +245,23 @@ void HelloWorld::initPosMove()
 
 void HelloWorld::LoadScore()
 {
-	auto maxScore = UserDefault::getInstance()->getStringForKey("MaxScore");
-	maxScoreLabel_->setString(maxScore);
+	//auto maxScore = UserDefault::getInstance()->getStringForKey("MaxScore");
+	//maxScoreLabel_->setString(maxScore);
+	std::ifstream ifile(FileUtils::getInstance()->fullPathForFilename("maxscore.txt"));
+	std::string line;
+	std::getline(ifile, line);
+	ifile.close();
+
+	std::string scoreStr;
+
+	size_t found = line.find(std::string("score: "));
+	if (found != std::string::npos)
+	{
+		scoreStr.resize(line.size() - found - std::string("score: ").size());
+		std::copy(line.begin() + found + std::string("score: ").size(), line.end(), scoreStr.begin());
+	}
+
+	this->SetMaxScore(std::atoi(scoreStr.c_str()));
 	//SetMaxScore();
 }
 
@@ -231,6 +273,9 @@ void HelloWorld::menuCloseCallback(Ref* pSender)
 void HelloWorld::menuReplayCallback(cocos2d::Ref* pSender)
 {
 	Director::getInstance()->popScene();
+	this->SaveScore();
+	this->LoadScore();
+	tm_.ClearIndexes();
 	setScore(0);
 	updateTask(0);
 	CreateLives();
@@ -321,8 +366,14 @@ void HelloWorld::onKeyPressed(const cocos2d::EventKeyboard::KeyCode& keyCode, co
 
 void HelloWorld::SaveScore()
 {
-	if(maxScore_ <= score_)
-		UserDefault::getInstance()->setStringForKey("MaxScore", scoreLabel_->getString());
+	if (maxScore_ <= score_)
+	{
+		//UserDefault::getInstance()->setStringForKey("MaxScore", scoreLabel_->getString());
+		std::string resPath = FileUtils::getInstance()->fullPathForFilename("maxscore.txt");
+		std::ofstream ofile(resPath);
+		ofile << "score: " << score_ << "\n";
+		ofile.close();
+	}
 }
 
 void HelloWorld::setLives(const int lives)
@@ -361,6 +412,13 @@ void HelloWorld::showEnd(const float dt)
 	Director::getInstance()->pushScene(endScene_);
 }
 
+void HelloWorld::showWon(const float dt)
+{
+	this->PlaySoundOnce("you_won.mp3");
+	createWonScene();
+	Director::getInstance()->pushScene(wonScene_);
+}
+
 void HelloWorld::TaskIsOut()
 {
 	if (--lives_ != 0)
@@ -378,7 +436,15 @@ void HelloWorld::TaskIsOut()
 
 void HelloWorld::updateTask(const float dt)
 {
-	task_ = tm_.getRandTask();
-	taskLabel_->setString(task_.getTask());
-	this->initPosMove();
+	if (score_ == endLevelScore_)
+	{
+		setLives(lives_);
+		scheduleOnce(schedule_selector(HelloWorld::showWon), 1);
+	}
+	else
+	{
+		task_ = tm_.getRandTask();
+		taskLabel_->setString(task_.getTask());
+		this->initPosMove();
+	}
 }

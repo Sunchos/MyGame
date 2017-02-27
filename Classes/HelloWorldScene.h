@@ -15,6 +15,8 @@ class HelloWorld : public cocos2d::Layer
 public:
 	//! Create end scene.
 	void createEndScene();
+	//! Create Won scene.
+	void createWonScene();
 	//! Create scene.
     static cocos2d::Scene* createScene();
 	//! Create Sprite.
@@ -66,6 +68,8 @@ private:
 	void ShowAnswer();
 	//! Show end scene.
 	void showEnd(const float dt);
+	//! Show won scene.
+	void showWon(const float dt);
 	//! Task label is out of screen.
 	void TaskIsOut();
 	//! Udpate task.
@@ -75,7 +79,9 @@ private:
 	// Private members.
 	//
 private:
-	//! Scene.
+	//! End leavel score.
+	static int endLevelScore_;
+	//! End scene.
 	cocos2d::Scene *endScene_;
 	//! Lives counter.
 	int lives_;
@@ -95,6 +101,8 @@ private:
 	TaskManager tm_;
 	//! Word task.
 	WordTask task_;
+	//! You won scene.
+	cocos2d::Scene *wonScene_;
 };
 
 #endif // __HELLOWORLD_SCENE_H__

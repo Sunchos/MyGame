@@ -19,6 +19,11 @@ TaskManager::~TaskManager()
 	//listOfTasks_ = nullptr;
 }
 
+void TaskManager::ClearIndexes()
+{
+	indexes_.clear();
+}
+
 void TaskManager::FindData(const std::string& line, const size_t index)
 {
 	std::string task;
@@ -59,7 +64,16 @@ int TaskManager::getNumTasks()
 
 WordTask TaskManager::getRandTask()
 {
-	random_ = random(0, numTasks_ - 1);
+	while(true)
+	{
+		random_ = random(0, numTasks_ - 1);
+		if (std::find(indexes_.begin(), indexes_.end(), random_) == indexes_.end())
+		{
+			indexes_.push_back(random_);
+			break;
+		}
+	}
+	
 	return getTask(random_);
 }
 
@@ -89,9 +103,9 @@ void TaskManager::LoadDefaultWords()
 	}
 }
 
-bool TaskManager::LoadFile(const std::string filePaht)
+bool TaskManager::LoadFile(const std::string filePath)
 {
-	std::ifstream ifile(filePaht);
+	std::ifstream ifile(filePath);
 	std::string line;
 	size_t i = 0;
 	if (!ifile.is_open())

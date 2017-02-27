@@ -20,6 +20,8 @@ public:
 	// Public methods.
 	//
 public:
+	//! Clear indexes.
+	void ClearIndexes();
 	//! Returns num tasks.
 	int getNumTasks();
 	//! Returns task.
@@ -38,16 +40,18 @@ private:
 	//! Load Default words.
 	void LoadDefaultWords();
 	//! Load from file.
-	bool LoadFile(const std::string filePaht);
+	bool LoadFile(const std::string filePath);
 	//! Set num tasks.
 	void SetNumTasks(const int);
-	//! Save.
-	//void Save();
+	//! Save fo file.
+	void SaveFile(const std::string& filePath);
 	
 	//
 	// Private members.
 	//
 private:
+	//! Indexes.
+	std::vector<int> indexes_;
 	//! List tasks.
 	std::vector<WordTask> listOfTasks_;
 	//! Number tasks.
