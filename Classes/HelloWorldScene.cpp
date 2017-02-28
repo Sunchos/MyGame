@@ -220,6 +220,14 @@ bool HelloWorld::init()
 	//SetMaxScore(0);
 	LoadScore();
 
+	Vec2 rightAnsPos = Vec2(origin.x + LABEL_FONTSIZE * 2 + 11, origin.y + visibleSize.height - LABEL_FONTSIZE * 3);
+	rightAnsLabel_ = this->CreateTextLabel(
+		std::string("ra: " + std::to_string(task_.getRightAns())).c_str(), LABEL_FONTNAME, LABEL_FONTSIZE, rightAnsPos);
+
+	Vec2 falseAnsPos = Vec2(origin.x + LABEL_FONTSIZE * 2 + 11, origin.y + visibleSize.height - LABEL_FONTSIZE * 4);
+	falseAnsLabel_ = this->CreateTextLabel(
+		std::string("fan: " + std::to_string(task_.getFalseAns())).c_str(), LABEL_FONTNAME, LABEL_FONTSIZE, falseAnsPos);
+
 	//Vec2 lives_pos = Vec2(origin.x + visibleSize.width - 60, origin.y + visibleSize.height - 20);
 	//this->CreateTextLabel("Lives: 2/5", LABEL_FONTNAME, LABEL_FONTSIZE, lives_pos);
 
@@ -321,6 +329,8 @@ void HelloWorld::onKeyPressed(const cocos2d::EventKeyboard::KeyCode& keyCode, co
 	{
 		this->PlaySoundOnce("got-word.mp3");
 		this->ShowAnswer();
+		task_.SetRightAns(task_.getRightAns() + 1);
+		tm_.SetWordTaskToList(task_);
 		addScore(SCORE_CHANGE);
 		scheduleOnce(schedule_selector(HelloWorld::updateTask), 1);
 	} 
@@ -329,6 +339,8 @@ void HelloWorld::onKeyPressed(const cocos2d::EventKeyboard::KeyCode& keyCode, co
 	else
 	{
 		ShowAnswer();
+		task_.SetFalseAns(task_.getFalseAns() + 1);
+		tm_.SetWordTaskToList(task_);
 		TaskIsOut();
 		//scheduleOnce(schedule_selector(HelloWorld::showEnd), 1);
 	}
@@ -369,8 +381,7 @@ void HelloWorld::SaveScore()
 	if (maxScore_ <= score_)
 	{
 		//UserDefault::getInstance()->setStringForKey("MaxScore", scoreLabel_->getString());
-		std::string resPath = FileUtils::getInstance()->fullPathForFilename("maxscore.txt");
-		std::ofstream ofile(resPath);
+		std::ofstream ofile(FileUtils::getInstance()->fullPathForFilename("maxscore.txt"));
 		ofile << "score: " << score_ << "\n";
 		ofile.close();
 	}
@@ -445,6 +456,11 @@ void HelloWorld::updateTask(const float dt)
 	{
 		task_ = tm_.getRandTask();
 		taskLabel_->setString(task_.getTask());
+		if (rightAnsLabel_ != nullptr && falseAnsLabel_ != nullptr)
+		{
+			rightAnsLabel_->setString(std::string("ra: " + std::to_string(task_.getRightAns())).c_str());
+			falseAnsLabel_->setString(std::string("fan: " + std::to_string(task_.getFalseAns())).c_str());
+		}
 		this->initPosMove();
 	}
 }

@@ -83,6 +83,8 @@ private:
 	static int endLevelScore_;
 	//! End scene.
 	cocos2d::Scene *endScene_;
+	//! False answer.
+	cocos2d::Label *falseAnsLabel_;
 	//! Lives counter.
 	int lives_;
 	//! Lives in Sprites.
@@ -91,6 +93,8 @@ private:
 	int maxScore_;
 	//! Max score label.
 	cocos2d::Label *maxScoreLabel_;
+	//! Right answer.
+	cocos2d::Label *rightAnsLabel_;
 	//! Score.
 	int score_;
 	//! Score label.

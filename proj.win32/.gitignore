@@ -1,3 +1,4 @@
 /Debug.win32/
 /Release.win32/
 *.VC.VC.opendb
+*.VC.db

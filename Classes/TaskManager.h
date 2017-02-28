@@ -30,6 +30,8 @@ public:
 	WordTask getRandTask();
 	//! Init.
 	void init(const int = 3);
+	//! Set task to list.
+	void SetWordTaskToList(WordTask&);
 
 	//
 	// Private methods.
@@ -41,10 +43,10 @@ private:
 	void LoadDefaultWords();
 	//! Load from file.
 	bool LoadFile(const std::string filePath);
-	//! Set num tasks.
-	void SetNumTasks(const int);
 	//! Save fo file.
 	void SaveFile(const std::string& filePath);
+	//! Set num tasks.
+	void SetNumTasks(const int);
 	
 	//
 	// Private members.

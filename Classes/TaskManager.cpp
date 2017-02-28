@@ -17,6 +17,7 @@ TaskManager::~TaskManager()
 {
 	//delete[] listOfTasks_;
 	//listOfTasks_ = nullptr;
+	this->SaveFile(FileUtils::getInstance()->fullPathForFilename("words.txt"));
 }
 
 void TaskManager::ClearIndexes()
@@ -29,32 +30,65 @@ void TaskManager::FindData(const std::string& line, const size_t index)
 	std::string task;
 	std::string ans;
 	std::string key;
+	std::string rightAns;
+	std::string falseAns;
 
-	size_t found = line.find(' ');
-	size_t old = 0;
+	size_t found = line.find("task: ");
+	size_t old = found;
 
 	if (found != std::string::npos)
-		for (size_t i = 0; i != found; ++i)
+	{
+		old += std::string("task: ").size();
+		found = line.find(' ', old);
+		for (size_t i = old; i != found; ++i)
 			task.push_back(line[i]);
-	old = found + 1;
-	found = line.find(' ', old);
+	}
 
+	old = found + 1;
+	found = line.find("ans: ", old);
 	if (found != std::string::npos)
+	{
+		old += std::string("ans: ").size();
+		found = line.find(' ', old);
 		for (size_t i = old; i != found; ++i)
 			ans.push_back(line[i]);
+	}
 
 	old = found + 1;
-
+	found = line.find("key: ", old);
 	if (found != std::string::npos)
-		for (size_t i = old; i != line.size(); ++i)
+	{
+		old += std::string("key: ").size();
+		found = line.find(' ', old);
+		for (size_t i = old; i != found; ++i)
 			key.push_back(line[i]);
+	}
+
+	old = found + 1;
+	found = line.find("right: ", old);
+	if (found != std::string::npos)
+	{
+		old += std::string("right: ").size();
+		found = line.find(' ', old);
+		for (size_t i = old; i != found; ++i)
+			rightAns.push_back(line[i]);
+	}
+
+	old = found + 1;
+	found = line.find("false: ", old);
+	if (found != std::string::npos)
+	{
+		old += std::string("right: ").size();
+		for (size_t i = old; i != line.size(); ++i)
+			falseAns.push_back(line[i]);
+	}
 
 	char *taskCh = new char[task.length() + 1];
 	strcpy(taskCh, task.c_str());
 	char *ansCh = new char[ans.length() + 1];
 	strcpy(ansCh, ans.c_str());
 
-	listOfTasks_.push_back(WordTask(taskCh, ansCh, key[0u]));
+	listOfTasks_.push_back(WordTask(taskCh, ansCh, key[0u], std::atoi(falseAns.c_str()),std::atoi(rightAns.c_str())));
 }
 
 int TaskManager::getNumTasks()
@@ -84,7 +118,7 @@ WordTask TaskManager::getTask(const int count)
 
 void TaskManager::init(const int numTask)
 {
-	if (!LoadFile("words.txt"))
+	if (!LoadFile(FileUtils::getInstance()->fullPathForFilename("words.txt")))
 		LoadDefaultWords();
 
 	SetNumTasks(listOfTasks_.size());
@@ -121,7 +155,27 @@ bool TaskManager::LoadFile(const std::string filePath)
 	return true;
 }
 
+void TaskManager::SaveFile(const std::string& filePath)
+{
+	std::ofstream ofile(filePath);
+	for (size_t i = 0; i != listOfTasks_.size(); ++i)
+	{
+		ofile << "task: " << listOfTasks_[i].getTask()
+			<< " ans: " << listOfTasks_[i].getAnswer()
+			<< " key: " << listOfTasks_[i].getKey()
+			<< " right: " << listOfTasks_[i].getRightAns()
+			<< " false: " << listOfTasks_[i].getFalseAns() << "\n";
+	}
+
+	ofile.close();
+}
+
 void TaskManager::SetNumTasks(const int num)
 {
 	numTasks_ = num;
+}
+
+void TaskManager::SetWordTaskToList(WordTask& wordTask)
+{
+	std::swap(listOfTasks_.at(random_), wordTask);
 }

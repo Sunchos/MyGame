@@ -39,8 +39,12 @@ public:
 	char* getTask() { return task_; }
 	//! Set answer.
 	int setAnswer(char*);
+	//! Set false answer.
+	void SetFalseAns(const int);
 	//! Set key.
 	int setKey(char);
+	//! Set right answer.
+	void SetRightAns(const int);
 	//! Set task.
 	int setTask(char*);
 

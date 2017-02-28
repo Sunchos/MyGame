@@ -28,6 +28,10 @@ int WordTask::init(char* t, char* ans, char key, int falAns, int righAns)
 		this->answer_ = ans;
 		this->task_ = t;
 	}
+
+	falseAns_ = falAns;
+	rightAns_ = righAns;
+
 	return 0;
 }
 
@@ -45,10 +49,20 @@ int WordTask::setAnswer(char* ans)
 	return 0;
 }
 
+void WordTask::SetFalseAns(const int falseAns)
+{
+	this->falseAns_ = falseAns;
+}
+
 int WordTask::setKey(const char key)
 {
 	this->key_ = key;
 	return 0;
+}
+
+void WordTask::SetRightAns(const int rightAns)
+{
+	this->rightAns_ = rightAns;
 }
 
 int WordTask::setTask(char* task)
