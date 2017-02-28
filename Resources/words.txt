@@ -1,25 +1,25 @@
-c_llege college o
-fi_h fish s
-p_one phone h
-bliz_ard blizzard z
-clo_dy cloudy u
-hu_id humid r
-lightn_ng lightning i
-over_ast overcast c
-ac_or actor t
-actre_s actress s
-arc_itect architect h
-art_st artist i
-ban_er banker k
-bar_er barber b
-bu_lder builder i
-carpen_er carpenter t
-c_shier cashier a
-c_ach coach o 
-de_eloper developer v
-dietici_n dietician a
-doct_r doctor o
-eco_omist economist n
-edi_or editor t
-el_ctrician electrician e
-en_ineer engineer g 
+task: c_llege ans: college key: o right: 0 false: 0
+task: fi_h ans: fish key: s right: 0 false: 0
+task: p_one ans: phone key: h right: 0 false: 0
+task: bliz_ard ans: blizzard key: z right: 0 false: 0
+task: clo_dy ans: cloudy key: u right: 0 false: 0
+task: hu_id ans: humid key: r right: 0 false: 0
+task:  ightn_ng ans: lightning key: i right: 0 false: 0
+task:  over_ast ans: overcast key: c right: 0 false: 0
+task:  ac_or ans: actor key: t right: 0 false: 0
+task:  actre_s ans: actress key: s right: 0 false: 0
+task:  arc_itect ans: architect key: h right: 0 false: 0
+task:  art_st ans: artist key: i right: 0 false: 0
+task:  ban_er ans: banker key: k right: 0 false: 0
+task:  bar_er ans: barber key: b right: 0 false: 0
+task:  bu_lder ans: builder key: i right: 0 false: 0
+task:  carpen_er ans: carpenter key: t right: 0 false: 0
+task:  c_shier ans: cashier key: a right: 0 false: 0
+task:  c_ach ans: coach key: o right: 0 false: 0 
+task:  de_eloper ans: developer key: v right: 0 false: 0
+task:  dietici_n ans: dietician key: a right: 0 false: 0
+task:  doct_r ans: doctor key: o right: 0 false: 0
+task:  eco_omist ans: economist key: n right: 0 false: 0
+task:  edi_or ans: editor key: t right: 0 false: 0
+task:  el_ctrician ans: electrician key: e right: 0 false: 0
+task:  en_ineer ans: engineer key: g right: 0 false: 0 
