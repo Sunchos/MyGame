@@ -12,7 +12,7 @@ WordTask::WordTask()
 
 WordTask::WordTask(char* t, char* ans, char key, int falAns, int righAns)
 {
-	this->init(t, ans, key, falAns, righAns);
+	init(t, ans, key, falAns, righAns);
 }
 
 WordTask::~WordTask()
@@ -22,11 +22,11 @@ WordTask::~WordTask()
 
 int WordTask::init(char* t, char* ans, char key, int falAns, int righAns)
 {
-	this->key_ = key;
+	key_ = key;
 	if (ans != nullptr && t != nullptr)
 	{
-		this->answer_ = ans;
-		this->task_ = t;
+		answer_ = ans;
+		task_ = t;
 	}
 
 	falseAns_ = falAns;
@@ -38,35 +38,37 @@ int WordTask::init(char* t, char* ans, char key, int falAns, int righAns)
 bool WordTask::isKeyCorrect(const EventKeyboard::KeyCode& keyCode)
 {
 	int offset = static_cast<char>(EventKeyboard::KeyCode::KEY_A) - 'a';
-	if (static_cast<EventKeyboard::KeyCode>(this->key_ + offset) == keyCode)
+	if (static_cast<EventKeyboard::KeyCode>(key_ + offset) == keyCode)
 		return true;
 	return false;
 }
 
 int WordTask::setAnswer(char* ans)
 {
-	this->answer_ = ans;
+	if(ans != nullptr)
+		answer_ = ans;
+
 	return 0;
 }
 
 void WordTask::SetFalseAns(const int falseAns)
 {
-	this->falseAns_ = falseAns;
+	falseAns_ = falseAns;
 }
 
 int WordTask::setKey(const char key)
 {
-	this->key_ = key;
+	key_ = key;
 	return 0;
 }
 
 void WordTask::SetRightAns(const int rightAns)
 {
-	this->rightAns_ = rightAns;
+	rightAns_ = rightAns;
 }
 
 int WordTask::setTask(char* task)
 {
-	this->task_ = task;
+	task_ = task;
 	return 0;
 }

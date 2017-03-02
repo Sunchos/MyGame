@@ -106,6 +106,9 @@ WordTask TaskManager::getRandTask()
 			indexes_.push_back(random_);
 			break;
 		}
+
+		if (indexes_.size() == listOfTasks_.size())
+			indexes_.clear();
 	}
 	
 	return getTask(random_);

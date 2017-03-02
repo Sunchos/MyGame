@@ -3,8 +3,8 @@ task: fi_h ans: fish key: s right: 0 false: 0
 task: p_one ans: phone key: h right: 0 false: 0
 task: bliz_ard ans: blizzard key: z right: 0 false: 0
 task: clo_dy ans: cloudy key: u right: 0 false: 0
-task: hu_id ans: humid key: r right: 0 false: 0
-task: ightn_ng ans: lightning key: i right: 0 false: 0
+task: hu_id ans: humid key: m right: 0 false: 0
+task: lightn_ng ans: lightning key: i right: 0 false: 0
 task: over_ast ans: overcast key: c right: 0 false: 0
 task: ac_or ans: actor key: t right: 0 false: 0
 task: actre_s ans: actress key: s right: 0 false: 0

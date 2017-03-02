@@ -1,11 +1,13 @@
 #include "HelloWorldScene.h"
 #include "SimpleAudioEngine.h"
+#include "ui/CocosGUI.h"
 #include <fstream>
 #include <string>
 
 USING_NS_CC;
 
-int HelloWorld::endLevelScore_ = 200;
+int HelloWorld::endLevelScore_ = 400;
+int HelloWorld::speed_ = 8;
 
 void HelloWorld::addScore(const int s)
 {
@@ -28,7 +30,7 @@ void HelloWorld::CloseApplication()
 	//_eventDispatcher->dispatchEvent(&customEndEvent);
 }
 
-void HelloWorld::CreateBackbround()
+void HelloWorld::CreateBackground()
 {
 	// Screen real dimensions
 	auto vSize = Director::getInstance()->getVisibleSize();
@@ -78,6 +80,54 @@ void HelloWorld::createEndScene()
 	endScene_->addChild(menu, 1);
 }
 
+void HelloWorld::createSettingsScene()
+{
+	settingsScene_ = Scene::create();
+
+	Vector<MenuItem*> menuItems;
+	Label* settingsLabel = Label::createWithTTF("Choose speed fall", LABEL_FONTNAME, 2 * LABEL_FONTSIZE);
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+	Vec2 pos = Vec2(origin.x + visibleSize.width / 2,
+		origin.y + visibleSize.height - 2 * LABEL_FONTSIZE);
+	settingsLabel->setPosition(pos);
+	settingsScene_->addChild(settingsLabel);
+
+	Vec2 middle(origin.x + visibleSize.width / 2,
+		origin.y + visibleSize.height / 2);
+
+	auto lowSpeedItem = MenuItemImage::create(
+		"NormalGreen.png",
+		"PressedGreen.png",
+		CC_CALLBACK_1(HelloWorld::menuSettingSpeedCallback, this, 8));
+	lowSpeedItem->setPosition(middle.x - lowSpeedItem->getContentSize().width, middle.y);
+	menuItems.pushBack(lowSpeedItem);
+
+	auto middleSpeedItem = MenuItemImage::create(
+		"NormalYellow.png",
+		"PressedYellow.png",
+		CC_CALLBACK_1(HelloWorld::menuSettingSpeedCallback, this, 4));
+	middleSpeedItem->setPosition(lowSpeedItem->getPosition().x + lowSpeedItem->getContentSize().width, middle.y);
+	menuItems.pushBack(middleSpeedItem);
+
+	auto fastSpeedItem = MenuItemImage::create(
+		"NormalRed.png",
+		"PressedRed.png",
+		CC_CALLBACK_1(HelloWorld::menuSettingSpeedCallback, this, 2));
+	fastSpeedItem->setPosition(middleSpeedItem->getPosition().x + middleSpeedItem->getContentSize().width, middle.y);
+	menuItems.pushBack(fastSpeedItem);
+
+	textField_ = cocos2d::ui::TextField::create("Input value here, less is faster", LABEL_FONTNAME, LABEL_FONTSIZE);
+	textField_->setPosition(Vec2(middle.x, middle.y - fastSpeedItem->getContentSize().height - LABEL_FONTSIZE));
+	textField_->addEventListener(CC_CALLBACK_2(HelloWorld::textFieldEvent, this));
+	settingsScene_->addChild(textField_);
+
+	auto menu = Menu::createWithArray(menuItems);
+	menu->setPosition(Vec2::ZERO);
+	settingsScene_->addChild(menu, 1);
+}
+
 void HelloWorld::createWonScene()
 {
 	wonScene_ = Scene::create();
@@ -107,10 +157,11 @@ void HelloWorld::CreateLives()
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	lives_ = LIVE_COUNT;
 	int blockSize = origin.x + visibleSize.width - LABEL_FONTSIZE * LIVE_COUNT;
+
 	for (size_t i = 0; i != LIVE_COUNT; ++i)
 	{
 		Vec2 sprite_pos = Vec2(blockSize, origin.y + visibleSize.height - LABEL_FONTSIZE);
-		liveSprites_[i] = CreateSprite("fullHeart.png", sprite_pos, 1);
+		liveSprites_.push_back(CreateSprite("fullHeart.png", sprite_pos, 1));
 		blockSize += LABEL_FONTSIZE;
 	}
 }
@@ -165,6 +216,7 @@ bool HelloWorld::init()
     // 2. add a menu item with "X" image, which is clicked to quit the program
     //    you may modify it.
 
+	Vector<MenuItem*> menuItems;
     // add a "close" icon to exit the progress. it's an autorelease object
     auto closeItem = MenuItemImage::create(
                                            "CloseNormal.png",
@@ -174,17 +226,19 @@ bool HelloWorld::init()
     closeItem->setPosition(Vec2(origin.x + visibleSize.width - closeItem->getContentSize().width/2 ,
                                 origin.y + closeItem->getContentSize().height/2));
 
-	//auto settingsItem = MenuItemImage::create(
-	//	"SettingsCloseNormal.png",
-	//	"SettingsCloseSelected.png",
-	//	CC_CALLBACK_1(HelloWorld::SettingsMenuCallBack, this)
-	//);
+	auto settingsItem = MenuItemImage::create(
+		"SettingsCloseNormal.png",
+		"SettingsCloseSelected.png",
+		CC_CALLBACK_1(HelloWorld::SettingsMenuCallBack, this)
+	);
 
-	//settingsItem->setPosition(Vec2(origin.x + settingsItem->getContentSize().width / 2,
-	//	origin.y + settingsItem->getContentSize().height / 2));
+	settingsItem->setPosition(Vec2(origin.x + settingsItem->getContentSize().width / 2,
+		origin.y + settingsItem->getContentSize().height / 2));
 
     // create menu, it's an autorelease object
-    auto menu = Menu::create(closeItem, NULL);
+	menuItems.pushBack(closeItem);
+	menuItems.pushBack(settingsItem);
+    auto menu = Menu::createWithArray(menuItems);
     menu->setPosition(Vec2::ZERO);
     this->addChild(menu, 1);
 
@@ -195,7 +249,8 @@ bool HelloWorld::init()
 	listener->onKeyPressed = CC_CALLBACK_2(HelloWorld::onKeyPressed, this);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
 
-	CreateBackbround();
+	CreateBackground();
+	CreateLives();
 
 	Vec2 task_pos = Vec2(origin.x + visibleSize.width / 2, 
 		origin.y + visibleSize.height / 4);
@@ -230,8 +285,6 @@ bool HelloWorld::init()
 
 	//Vec2 lives_pos = Vec2(origin.x + visibleSize.width - 60, origin.y + visibleSize.height - 20);
 	//this->CreateTextLabel("Lives: 2/5", LABEL_FONTNAME, LABEL_FONTSIZE, lives_pos);
-
-	CreateLives();
 
     return true;
 }
@@ -281,46 +334,24 @@ void HelloWorld::menuCloseCallback(Ref* pSender)
 void HelloWorld::menuReplayCallback(cocos2d::Ref* pSender)
 {
 	Director::getInstance()->popScene();
-	this->SaveScore();
-	this->LoadScore();
-	tm_.ClearIndexes();
-	setScore(0);
-	updateTask(0);
-	CreateLives();
+	ResetGame();
+}
+
+void HelloWorld::menuSettingSpeedCallback(cocos2d::Ref* pSender, const int speed)
+{
+	Director::getInstance()->popScene();
+	speed_ = speed;
+	ShowAnswer();
+	ResetGame();
 }
 
 void HelloWorld::MoveObject(cocos2d::Sprite* obj, cocos2d::Vec2& moveTo, cocos2d::Vec2& scaleBy)
 {
-	auto seq = Sequence::create(MoveTo::create(8, moveTo), CallFuncN::create(CC_CALLBACK_0(HelloWorld::TaskIsOut, this)), NULL);
-	//auto acMoveTo = MoveTo::create(8, moveTo);
+	auto seq = Sequence::create(MoveTo::create(speed_, moveTo), CallFuncN::create(CC_CALLBACK_0(HelloWorld::TaskIsOut, this)), NULL);
 	auto acScaleBy = ScaleBy::create(2, scaleBy.x, scaleBy.y);
 
 	obj->runAction(acScaleBy);
 	obj->runAction(seq);
-
-	//auto acMoveTo = MoveTo::create(2, Vec2(240, 180));
-	//auto moveBy1 = MoveBy::create(2, Vec2(-120, 0));
-	//auto moveTofin = MoveTo::create(10, moveTo);
-	//auto delay = DelayTime::create(0);
-	//
-	//auto acScaleBy = ScaleBy::create(3, scaleBy.x, scaleBy.y);
-	//obj->runAction(acScaleBy);
-
-	//auto rotateTo = RotateTo::create(2.0f, 40.0f);
-	//obj->runAction(rotateTo);
-
-	//auto rotateBy = RotateBy::create(2.0f, 45.0f);
-	//obj->runAction(RepeatForever::create(rotateBy));
-
-	//MoveEaseBounceIn(obj);
-	//obj->runAction(Sequence::create(acMoveTo, delay, moveBy1, delay->clone(), moveTofin, nullptr));
-	//obj->runAction(RepeatForever::create(Sequence::create(acMoveTo, delay, moveBy1, delay->clone(), moveTofin, nullptr)));
-}
-
-void HelloWorld::PlaySoundOnce(const std::string& path)
-{
-	auto audio = CocosDenshion::SimpleAudioEngine::getInstance();
-	audio->playEffect(path.c_str(), false, 1.0f, 1.0f, 1.0f);
 }
 
 void HelloWorld::onKeyPressed(const cocos2d::EventKeyboard::KeyCode& keyCode, const cocos2d::Event* event)
@@ -333,9 +364,9 @@ void HelloWorld::onKeyPressed(const cocos2d::EventKeyboard::KeyCode& keyCode, co
 		tm_.SetWordTaskToList(task_);
 		addScore(SCORE_CHANGE);
 		scheduleOnce(schedule_selector(HelloWorld::updateTask), 1);
-	} 
+	}
 	else if (EventKeyboard::KeyCode::KEY_ESCAPE == keyCode)
-			this->CloseApplication();
+		this->CloseApplication();
 	else
 	{
 		ShowAnswer();
@@ -344,36 +375,34 @@ void HelloWorld::onKeyPressed(const cocos2d::EventKeyboard::KeyCode& keyCode, co
 		TaskIsOut();
 		//scheduleOnce(schedule_selector(HelloWorld::showEnd), 1);
 	}
+}
 
-	//switch (keyCode)
-	//{
-	//case EventKeyboard::KeyCode::KEY_O:
-	//{
-	//	taskLabel_->setOpacity(0);
-	//	break;
-	//}
-	//case EventKeyboard::KeyCode::KEY_A:
-	//{
-	//	auto visibleSize = Director::getInstance()->getVisibleSize();
-	//	Vec2 origin = Director::getInstance()->getVisibleOrigin();
-	//	
-	//	taskLabel_->setPosition(Vec2(origin.x + visibleSize.width / 2,
-	//		origin.y + visibleSize.height / 2 + 70));
-	//	taskLabel_->setOpacity(255);
-	//	taskLabel_->setString("Hi");
-	//	break;
-	//}
-	//case EventKeyboard::KeyCode::KEY_B:
-	//{
-	//	taskLabel_->setString("bye");
-	//	break;
-	//}
-	//case EventKeyboard::KeyCode::KEY_ESCAPE:
-	//{
-	//	this->CloseApplication();
-	//	break;
-	//}
-	//}
+void HelloWorld::PlaySoundOnce(const std::string& path)
+{
+	auto audio = CocosDenshion::SimpleAudioEngine::getInstance();
+	audio->playEffect(path.c_str(), false, 1.0f, 1.0f, 1.0f);
+}
+
+void HelloWorld::ResetGame()
+{
+	this->SaveScore();
+	this->LoadScore();
+	tm_.ClearIndexes();
+	setScore(0);
+	updateTask(0);
+	ResetLives();
+}
+
+void HelloWorld::ResetLives()
+{
+	for (size_t i = 0; i != liveSprites_.size(); ++i)
+	{
+		this->removeChild(liveSprites_.at(i));
+		liveSprites_.at(i) = nullptr;
+	}
+	liveSprites_.clear();
+
+	CreateLives();
 }
 
 void HelloWorld::SaveScore()
@@ -389,8 +418,17 @@ void HelloWorld::SaveScore()
 
 void HelloWorld::setLives(const int lives)
 {
-	if(lives > -1)
-		liveSprites_[lives] = CreateSprite("emptyHeart.png", liveSprites_[lives]->getPosition(), 1);
+	try 
+	{
+		if (lives > -1)
+		{
+			liveSprites_[lives] = CreateSprite("emptyHeart.png", liveSprites_[lives]->getPosition(), 1);
+		}
+	}
+	catch (...)
+	{
+
+	}
 }
 
 void HelloWorld::SetMaxScore(const int s)
@@ -405,9 +443,11 @@ void HelloWorld::setScore(const int s)
 	scoreLabel_->setString(std::to_string(score_));
 }
 
-void HelloWorld::SettingsMenuCallBack()
+void HelloWorld::SettingsMenuCallBack(Ref* pSender)
 {
-	//! TODO: set speed fall of words.
+	this->PlaySoundOnce("pause.mp3");
+	createSettingsScene();
+	Director::getInstance()->pushScene(settingsScene_);
 }
 
 void HelloWorld::ShowAnswer()
@@ -445,10 +485,22 @@ void HelloWorld::TaskIsOut()
 	}
 }
 
+void HelloWorld::textFieldEvent(cocos2d::Ref* pSender, cocos2d::ui::TextField::EventType type)
+{
+	if (type == ui::TextField::EventType::DETACH_WITH_IME)
+	{
+		Director::getInstance()->popScene();
+		speed_ = std::atoi(textField_->getString().c_str());
+		ShowAnswer();
+		ResetGame();
+	}
+}
+
 void HelloWorld::updateTask(const float dt)
 {
 	if (score_ == endLevelScore_)
 	{
+		lives_ = -1;
 		setLives(lives_);
 		scheduleOnce(schedule_selector(HelloWorld::showWon), 1);
 	}

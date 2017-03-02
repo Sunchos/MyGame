@@ -4,6 +4,7 @@
 #include "cocos2d.h"
 #include "WordTask.h"
 #include "TaskManager.h"
+#include "ui/CocosGUI.h"
 
 #define LABEL_FONTNAME "fonts/Marker Felt.ttf"
 #define LABEL_FONTSIZE 24
@@ -15,6 +16,8 @@ class HelloWorld : public cocos2d::Layer
 public:
 	//! Create end scene.
 	void createEndScene();
+	//! Create settings scene.
+	void createSettingsScene();
 	//! Create Won scene.
 	void createWonScene();
 	//! Create scene.
@@ -29,10 +32,14 @@ public:
     void menuCloseCallback(cocos2d::Ref* pSender);
 	//! Callback for replay button.
 	void menuReplayCallback(cocos2d::Ref* pSender);
+	//! Callback for setting speed from menu.
+	void menuSettingSpeedCallback(cocos2d::Ref* pSender, const int speed);
 	//! Move objects on screen.
 	void MoveObject(cocos2d::Sprite* obj, cocos2d::Vec2& moveTo, cocos2d::Vec2& scaleBy);
 	//! Event Key pressed.
 	void onKeyPressed(const cocos2d::EventKeyboard::KeyCode& keyCode, const cocos2d::Event* event);
+	//! Text field event.
+	void textFieldEvent(cocos2d::Ref* pSender, cocos2d::ui::TextField::EventType type);
     // implement the "static create()" method manually
     CREATE_FUNC(HelloWorld);
 
@@ -45,7 +52,7 @@ private:
 	//! Close application.
 	void CloseApplication();
 	//! Create background.
-	void CreateBackbround();
+	void CreateBackground();
 	//! Create lives.
 	void CreateLives();
 	//! Init object move.
@@ -54,6 +61,10 @@ private:
 	void LoadScore();
 	//! Play sound once.
 	void PlaySoundOnce(const std::string& path);
+	//! Reset game.
+	void ResetGame();
+	//! Reset lives.
+	void ResetLives();
 	//! Save score.
 	void SaveScore();
 	//! Set lives.
@@ -63,7 +74,7 @@ private:
 	//! Set socre.
 	void setScore(const int s);
 	//! Settings menu.
-	void SettingsMenuCallBack();
+	void SettingsMenuCallBack(Ref* pSender);
 	//! Show answer.
 	void ShowAnswer();
 	//! Show end scene.
@@ -88,7 +99,7 @@ private:
 	//! Lives counter.
 	int lives_;
 	//! Lives in Sprites.
-	cocos2d::Sprite* liveSprites_[LIVE_COUNT];
+	std::vector<cocos2d::Sprite*> liveSprites_;
 	//! Max score.
 	int maxScore_;
 	//! Max score label.
@@ -99,12 +110,18 @@ private:
 	int score_;
 	//! Score label.
 	cocos2d::Label *scoreLabel_;
-	//! Task label.
-	cocos2d::Label* taskLabel_;
-	//! Task manager.
-	TaskManager tm_;
+	//! Settings scene.
+	cocos2d::Scene * settingsScene_;
+	//! Speed.
+	static int speed_;
 	//! Word task.
 	WordTask task_;
+	//! Task label.
+	cocos2d::Label* taskLabel_;
+	//! Text feild.
+	cocos2d::ui::TextField *textField_;
+	//! Task manager.
+	TaskManager tm_;
 	//! You won scene.
 	cocos2d::Scene *wonScene_;
 };
